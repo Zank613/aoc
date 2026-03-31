@@ -10,8 +10,6 @@ file(GLOB_RECURSE AOC_MAIN_FILES
 )
 
 foreach(MAIN_FILE IN LISTS AOC_MAIN_FILES)
-    file(RELATIVE_PATH REL_PATH "${CMAKE_SOURCE_DIR}" "${MAIN_FILE}")
-
     get_filename_component(DAY_DIR "${MAIN_FILE}" DIRECTORY)
     get_filename_component(DAY_NAME "${DAY_DIR}" NAME)
 
@@ -20,7 +18,12 @@ foreach(MAIN_FILE IN LISTS AOC_MAIN_FILES)
 
     set(TARGET_NAME "${YEAR_NAME}_${DAY_NAME}")
 
-    add_executable(${TARGET_NAME} "${MAIN_FILE}")
+    file(GLOB DAY_SOURCES
+            CONFIGURE_DEPENDS
+            "${DAY_DIR}/*.cpp"
+    )
+
+    add_executable(${TARGET_NAME} ${DAY_SOURCES})
 
     add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
